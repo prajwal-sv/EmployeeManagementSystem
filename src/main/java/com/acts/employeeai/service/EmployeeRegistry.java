@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import main.java.com.acts.employeeai.exception.DuplicateEmailException;
+import main.java.com.acts.employeeai.exception.EmployeeNotFoundException;
 import main.java.com.acts.employeeai.model.Employee;
 
 public class EmployeeRegistry {
@@ -16,6 +18,14 @@ public class EmployeeRegistry {
     private final Map<Long , Employee> employeeById = new HashMap<>();
 
     public void  addEmployee(Employee employee){
+        for( Employee existingEmployee : employees){
+
+            if (existingEmployee.getEmail().equalsIgnoreCase(employee.getEmail())) {
+
+                throw new DuplicateEmailException("Employee with email already exists: " + employee.getEmail());
+                
+            }
+        }
         employees.add(employee);
         uniqueEmployees.add(employee);
         employeeById.put(employee.getId(), employee);
@@ -28,6 +38,12 @@ public class EmployeeRegistry {
     }
 
     public Employee findById(Long id){
+        Employee employee = employeeById.get(id);
+
+        if (employee == null) {
+            throw new EmployeeNotFoundException("Employee not found with ID: " + id);
+            
+        }
         return employeeById.get(id);
     }
 
