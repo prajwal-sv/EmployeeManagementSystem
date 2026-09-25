@@ -1,0 +1,12 @@
+# Maven build output
+target/
+
+# Java compiler output
+*.class
+
+# IDE metadata
+.idea/
+*.iml
+.classpath
+.project
+.settings/
