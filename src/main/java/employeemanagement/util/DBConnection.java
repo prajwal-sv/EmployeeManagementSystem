@@ -11,35 +11,39 @@ public class DBConnection {
 
     private static final Properties props = new Properties();
 
-    // Static block runs once, when the class is first loaded.
-    // It reads db.properties from the classpath so we never
-    // hardcode credentials directly in this file.
     static {
         try (InputStream input = DBConnection.class
                 .getClassLoader()
                 .getResourceAsStream("db.properties")) {
 
-            if (input == null) {
-                throw new RuntimeException("db.properties not found on classpath");
+            if (input != null) {
+                props.load(input);
             }
-            props.load(input);
 
-            // Explicitly load the JDBC driver class named in the properties file.
-            Class.forName(props.getProperty("db.driver"));
+            Class.forName(getConfig("db.driver", "DB_DRIVER", "com.mysql.cj.jdbc.Driver"));
 
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException("Failed to initialize database configuration", e);
         }
     }
 
-    // Every DAO will call this method to get a fresh connection.
-    // We return a new Connection each time rather than sharing one,
-    // since JDBC Connections are not safe to share across requests.
+    // Checks an environment variable FIRST (used in production on Render),
+    // and falls back to db.properties (used for local development).
+    // This is the "centralized config, easy to change at deployment" the
+    // spec requires — no code changes needed to switch environments.
+    private static String getConfig(String propertyKey, String envKey, String defaultValue) {
+        String envValue = System.getenv(envKey);
+        if (envValue != null && !envValue.isEmpty()) {
+            return envValue;
+        }
+        return props.getProperty(propertyKey, defaultValue);
+    }
+
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(
-                props.getProperty("db.url"),
-                props.getProperty("db.username"),
-                props.getProperty("db.password")
-        );
+        String url = getConfig("db.url", "DB_URL", null);
+        String username = getConfig("db.username", "DB_USERNAME", null);
+        String password = getConfig("db.password", "DB_PASSWORD", null);
+
+        return DriverManager.getConnection(url, username, password);
     }
 }
