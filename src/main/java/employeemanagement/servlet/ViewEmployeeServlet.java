@@ -28,17 +28,24 @@ public class ViewEmployeeServlet extends HttpServlet {
         out.println("<!DOCTYPE html><html><head><title>Employees</title>");
         out.println("<link rel='stylesheet' href='css/style.css'></head><body>");
         out.println("<h1>All Employees</h1>");
+
         out.println("<a href='dashboard.html'>Back to Dashboard</a> | <a href='add-employee.html'>Add Employee</a>");
 
+        out.println("<form action='employees.html' method='get' style='margin-top:16px;'>");
+        out.println("<input type='text' name='keyword' placeholder='Search by name, email, or department'>");
+        out.println("<button type='submit'>Search</button>");
+        out.println("</form>");
+
         try {
-            List<Employee> employees = employeeService.getAllEmployees();
+            String keyword = request.getParameter("keyword");
+            List<Employee> employees = employeeService.searchEmployees(keyword);
 
             if (employees.isEmpty()) {
                 out.println("<p>No employees found.</p>");
             } else {
                 out.println("<table border='1' cellpadding='8' cellspacing='0'>");
                 out.println("<tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th>" +
-                             "<th>Department</th><th>Designation</th><th>Salary</th><th>Joining Date</th></tr>");
+                             "<th>Department</th><th>Designation</th><th>Salary</th><th>Joining Date</th><th>Actions</th></tr>");
 
                 for (Employee e : employees) {
                     out.println("<tr>");
@@ -50,6 +57,8 @@ public class ViewEmployeeServlet extends HttpServlet {
                     out.println("<td>" + e.getDesignation() + "</td>");
                     out.println("<td>" + e.getSalary() + "</td>");
                     out.println("<td>" + e.getJoiningDate() + "</td>");
+                    out.println("<td><a href='edit-employee?id=" + e.getId() + "'>Edit</a> | " +
+                                 "<a href='delete-employee?id=" + e.getId() + "' onclick='return confirm(\"Delete this employee?\")'>Delete</a></td>");
                     out.println("</tr>");
                 }
                 out.println("</table>");
