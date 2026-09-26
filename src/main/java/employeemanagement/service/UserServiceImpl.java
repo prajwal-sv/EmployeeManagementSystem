@@ -3,6 +3,7 @@ package employeemanagement.service;
 import employeemanagement.dao.UserDAO;
 import employeemanagement.dao.UserDAOImpl;
 import employeemanagement.model.User;
+import employeemanagement.util.PasswordUtil;
 import employeemanagement.util.ValidationUtil;
 
 import java.sql.SQLException;
@@ -22,10 +23,7 @@ public class UserServiceImpl implements UserService {
             return null; // no such user — Servlet will show "invalid login"
         }
 
-        // TEMPORARY: plain-text comparison. We will replace this with proper
-        // password hashing (e.g. BCrypt-style hashing) in Phase 8, since storing
-        // or comparing plain-text passwords is explicitly disallowed by the spec.
-        if (user.getPassword().equals(password)) {
+        if (PasswordUtil.verifyPassword(password, user.getPassword())) {
             return user;
         }
         return null;

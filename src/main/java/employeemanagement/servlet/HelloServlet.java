@@ -26,13 +26,11 @@ public class HelloServlet extends HttpServlet {
         out.println("<h1>Servlet is working!</h1>");
 
         // Temporary DB connection test — will be removed once DAO layer exists.
-        try (Connection conn = DBConnection.getConnection()) {
-            out.println("<p style='color:green;'>Database connection successful.</p>");
-        } catch (SQLException e) {
-            out.println("<p style='color:red;'>Database connection FAILED: " + e.getMessage() + "</p>");
-        }
-
-        out.println("<a href='index.html'>Back</a>");
-        out.println("</body></html>");
+       try (Connection conn = DBConnection.getConnection()) {
+        out.println("<p style='color:green;'>Database connection successful.</p>");
+            } catch (SQLException e) {
+             out.println("<p style='color:red;'>Database connection FAILED: " + e.getMessage() + "</p>");
+            }
+out.println("<a href='index.html'>Back</a>");
     }
 }
