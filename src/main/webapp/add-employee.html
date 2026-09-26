@@ -8,10 +8,6 @@
 <body>
     <h1>Add Employee</h1>
 
-    <% if (request.getAttribute("error") != null) { %>
-        <p style="color:red;"><%= request.getAttribute("error") %></p>
-    <% } %>
-
     <form action="add-employee" method="post">
         <label>Name</label><br>
         <input type="text" name="name" required><br><br>
