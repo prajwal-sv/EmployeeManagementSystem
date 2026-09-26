@@ -19,7 +19,6 @@ public class EditEmployeeServlet extends HttpServlet {
 
     private final EmployeeService employeeService = new EmployeeServiceImpl();
 
-    // Shows the edit form, pre-filled with the employee's current data.
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -33,14 +32,24 @@ public class EditEmployeeServlet extends HttpServlet {
             Employee e = employeeService.getEmployeeById(id);
 
             if (e == null) {
-                out.println("<!DOCTYPE html><html><body><h1>Employee not found</h1>" +
-                             "<a href='employees.html'>Back</a></body></html>");
+                out.println("<!DOCTYPE html><html><head><link rel='stylesheet' href='css/style.css'></head><body>");
+                out.println("<h1>Employee not found</h1>");
+                out.println("<p class='error'>No employee exists with that ID.</p>");
+                out.println("<a href='employees.html'>Back to list</a></body></html>");
                 return;
             }
 
             out.println("<!DOCTYPE html><html><head><title>Edit Employee</title>");
             out.println("<link rel='stylesheet' href='css/style.css'></head><body>");
             out.println("<h1>Edit Employee</h1>");
+
+            out.println("<nav>");
+            out.println("<a href='dashboard.html'>Dashboard</a>");
+            out.println("<a href='employees.html'>Employees</a>");
+            out.println("<a href='add-employee.html'>Add Employee</a>");
+            out.println("<a href='logout'>Logout</a>");
+            out.println("</nav>");
+
             out.println("<form action='edit-employee' method='post'>");
             out.println("<input type='hidden' name='id' value='" + e.getId() + "'>");
 
@@ -54,19 +63,23 @@ public class EditEmployeeServlet extends HttpServlet {
 
             out.println("<button type='submit'>Update Employee</button>");
             out.println("</form>");
-            out.println("<a href='employees.html'>Cancel</a>");
-            out.println("</body></html>");
 
         } catch (NumberFormatException e) {
-            out.println("<!DOCTYPE html><html><body><h1>Invalid employee ID</h1>" +
-                         "<a href='employees.html'>Back</a></body></html>");
+            out.println("<!DOCTYPE html><html><head><link rel='stylesheet' href='css/style.css'></head><body>");
+            out.println("<h1>Invalid employee ID</h1>");
+            out.println("<p class='error'>The employee ID in the URL is not valid.</p>");
+            out.println("<a href='employees.html'>Back</a></body></html>");
         } catch (SQLException e) {
-            out.println("<!DOCTYPE html><html><body><h1>Server error</h1>" +
-                         "<a href='employees.html'>Back</a></body></html>");
+            e.printStackTrace(); // logged for debugging — never shown to the user
+            out.println("<!DOCTYPE html><html><head><link rel='stylesheet' href='css/style.css'></head><body>");
+            out.println("<h1>Server error</h1>");
+            out.println("<p class='error'>A server error occurred while loading this employee.</p>");
+            out.println("<a href='employees.html'>Back</a></body></html>");
         }
+
+        out.println("</body></html>");
     }
 
-    // Processes the update form submission.
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -104,6 +117,7 @@ public class EditEmployeeServlet extends HttpServlet {
         } catch (IllegalArgumentException e) {
             showError(response, e.getMessage());
         } catch (SQLException e) {
+            e.printStackTrace(); // logged for debugging — never shown to the user
             showError(response, "A server error occurred while updating the employee.");
         }
     }
@@ -111,8 +125,9 @@ public class EditEmployeeServlet extends HttpServlet {
     private void showError(HttpServletResponse response, String message) throws IOException {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
-        out.println("<!DOCTYPE html><html><body><h1>Could not update employee</h1>");
-        out.println("<p style='color:red;'>" + message + "</p>");
+        out.println("<!DOCTYPE html><html><head><link rel='stylesheet' href='css/style.css'></head><body>");
+        out.println("<h1>Could not update employee</h1>");
+        out.println("<p class='error'>" + message + "</p>");
         out.println("<a href='employees.html'>Back</a></body></html>");
     }
 }

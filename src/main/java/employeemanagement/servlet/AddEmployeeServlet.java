@@ -29,7 +29,6 @@ public class AddEmployeeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Check for missing parameters up front (spec requires handling this).
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
@@ -58,10 +57,9 @@ public class AddEmployeeServlet extends HttpServlet {
         } catch (java.time.format.DateTimeParseException e) {
             showError(response, "Joining date must be a valid date.");
         } catch (IllegalArgumentException e) {
-            // Validation errors from the Service layer (empty fields, bad email, duplicate email, etc.)
             showError(response, e.getMessage());
         } catch (SQLException e) {
-            // Never expose raw SQL details to the user.
+            e.printStackTrace(); // logged for debugging — never shown to the user
             showError(response, "A server error occurred while saving the employee. Please try again.");
         }
     }
@@ -72,7 +70,15 @@ public class AddEmployeeServlet extends HttpServlet {
         out.println("<!DOCTYPE html><html><head><title>Error</title>");
         out.println("<link rel='stylesheet' href='css/style.css'></head><body>");
         out.println("<h1>Could not add employee</h1>");
-        out.println("<p style='color:red;'>" + message + "</p>");
+
+        out.println("<nav>");
+        out.println("<a href='dashboard.html'>Dashboard</a>");
+        out.println("<a href='employees.html'>Employees</a>");
+        out.println("<a href='add-employee.html'>Add Employee</a>");
+        out.println("<a href='logout'>Logout</a>");
+        out.println("</nav>");
+
+        out.println("<p class='error'>" + message + "</p>");
         out.println("<a href='add-employee.html'>Try again</a>");
         out.println("</body></html>");
     }

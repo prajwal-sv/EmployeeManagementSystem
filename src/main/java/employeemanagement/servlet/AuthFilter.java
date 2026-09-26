@@ -8,10 +8,17 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-// Runs before every request to dashboard.html and any /employee* servlet.
-// If there's no logged-in user in the session, redirect to login instead
-// of letting the request through.
-@WebFilter(urlPatterns = {"/dashboard.html", "/employees.html", "/add-employee.html"})
+// Runs before every request matching these URLs. If there's no logged-in
+// user in the session, redirect to login instead of letting the request
+// through. This now covers Edit and Delete too, closing the gap where
+// those two servlets were previously reachable without logging in.
+@WebFilter(urlPatterns = {
+    "/dashboard.html",
+    "/employees.html",
+    "/add-employee.html",
+    "/edit-employee",
+    "/delete-employee"
+})
 public class AuthFilter implements Filter {
 
     @Override

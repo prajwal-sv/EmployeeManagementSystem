@@ -29,7 +29,12 @@ public class ViewEmployeeServlet extends HttpServlet {
         out.println("<link rel='stylesheet' href='css/style.css'></head><body>");
         out.println("<h1>All Employees</h1>");
 
-        out.println("<a href='dashboard.html'>Back to Dashboard</a> | <a href='add-employee.html'>Add Employee</a>");
+        out.println("<nav>");
+        out.println("<a href='dashboard.html'>Dashboard</a>");
+        out.println("<a href='employees.html'>Employees</a>");
+        out.println("<a href='add-employee.html'>Add Employee</a>");
+        out.println("<a href='logout'>Logout</a>");
+        out.println("</nav>");
 
         out.println("<form action='employees.html' method='get' style='margin-top:16px;'>");
         out.println("<input type='text' name='keyword' placeholder='Search by name, email, or department'>");
@@ -64,7 +69,8 @@ public class ViewEmployeeServlet extends HttpServlet {
                 out.println("</table>");
             }
         } catch (SQLException e) {
-            out.println("<p style='color:red;'>A server error occurred while loading employees.</p>");
+            e.printStackTrace(); // logged for debugging — never shown to the user
+            out.println("<p class='error'>A server error occurred while loading employees.</p>");
         }
 
         out.println("</body></html>");

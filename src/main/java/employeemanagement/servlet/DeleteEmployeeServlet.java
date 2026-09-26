@@ -29,7 +29,8 @@ public class DeleteEmployeeServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             response.sendRedirect("employees.html"); // invalid id, just go back to the list
         } catch (SQLException e) {
-            response.sendRedirect("employees.html"); // could enhance later with an error message
+            e.printStackTrace(); // logged for debugging — never shown to the user
+            response.sendRedirect("employees.html");
         }
     }
 }
